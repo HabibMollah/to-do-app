@@ -1,8 +1,13 @@
 import { useRef, useState } from 'react';
 
 function App() {
+  interface Keys {
+    id: string;
+    title: string;
+    completed: boolean;
+  }
   const inputRef = useRef<HTMLInputElement>(null);
-  const [todos, setTodo] = useState<string[]>([]);
+  const [todos, setTodos] = useState<Keys[]>([]);
   console.log(todos);
 
   return (
@@ -12,7 +17,16 @@ function App() {
           action=""
           onSubmit={(e) => {
             e.preventDefault();
-            inputRef.current && setTodo([...todos, inputRef.current.value]);
+            inputRef.current &&
+              setTodos([
+                ...todos,
+                {
+                  id: crypto.randomUUID(),
+                  title: inputRef.current.value,
+                  completed: false,
+                },
+              ]);
+            inputRef.current.value = '';
           }}
           className="m-4">
           <label
@@ -36,10 +50,16 @@ function App() {
         <ul>
           {todos.map((todo) => {
             return (
-              <li>
+              <li key={todo.id}>
                 <label htmlFor="checkbox">
-                  <input type="checkbox" id="checkbox" className="m-2" />
-                  {todo}
+                  <input
+                    type="checkbox"
+                    id="checkbox"
+                    checked={todo.completed}
+                    onChange={() => setTodos([...todos])}
+                    className="m-2"
+                  />
+                  {todo.title}
                   <button className="bg-red-100 px-1 mx-1 rounded-lg border-red-500 border text-red-500 font-bold text-sm">
                     Delete
                   </button>
