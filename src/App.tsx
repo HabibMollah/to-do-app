@@ -17,7 +17,7 @@ function App() {
       })
     );
   }
-  function deleteTodo(id) {
+  function deleteTodo(id: string) {
     setTodos(todos.filter((todo) => todo.id !== id));
   }
   console.log(todos);
