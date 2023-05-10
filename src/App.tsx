@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 
 function App() {
   interface Todo {
@@ -9,6 +9,20 @@ function App() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
 
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    inputRef.current &&
+      inputRef.current.value &&
+      setTodos([
+        ...todos,
+        {
+          id: crypto.randomUUID(),
+          title: inputRef.current.value,
+          completed: false,
+        },
+      ]);
+    if (inputRef.current !== null) inputRef.current.value = '';
+  };
   function toggleChecked(id: string, completed: boolean) {
     setTodos(
       todos.map((todo) => {
@@ -24,22 +38,7 @@ function App() {
   return (
     <div>
       <div className="text-center">
-        <form
-          action=""
-          onSubmit={(e) => {
-            e.preventDefault();
-            inputRef.current &&
-              setTodos([
-                ...todos,
-                {
-                  id: crypto.randomUUID(),
-                  title: inputRef.current.value,
-                  completed: false,
-                },
-              ]);
-            if (inputRef.current !== null) inputRef.current.value = '';
-          }}
-          className="m-4">
+        <form action="" onSubmit={handleSubmit} className="m-4">
           <label
             htmlFor="todo-text"
             className="text-orange-500 font-bold text-3xl">
@@ -62,12 +61,12 @@ function App() {
           {todos.map((todo) => {
             return (
               <li key={todo.id}>
-                <label htmlFor="checkbox">
+                <label htmlFor={todo.id}>
                   <input
                     type="checkbox"
                     checked={todo.completed}
                     onChange={(e) => toggleChecked(todo.id, e.target.checked)}
-                    id="checkbox"
+                    id={todo.id}
                     className="m-2"
                   />
                   {todo.title}
