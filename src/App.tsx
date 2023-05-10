@@ -1,15 +1,26 @@
 import { useRef, useState } from 'react';
 
 function App() {
-  interface Keys {
+  interface Todo {
     id: string;
     title: string;
     completed: boolean;
   }
   const inputRef = useRef<HTMLInputElement>(null);
-  const [todos, setTodos] = useState<Keys[]>([]);
-  console.log(todos);
+  const [todos, setTodos] = useState<Todo[]>([]);
 
+  function toggleChecked(id: string, completed: boolean) {
+    setTodos(
+      todos.map((todo) => {
+        if (todo.id === id) return { ...todo, completed };
+        return todo;
+      })
+    );
+  }
+  function deleteTodo(id) {
+    setTodos(todos.filter((todo) => todo.id !== id));
+  }
+  console.log(todos);
   return (
     <div>
       <div className="text-center">
@@ -26,7 +37,7 @@ function App() {
                   completed: false,
                 },
               ]);
-            inputRef.current.value = '';
+            if (inputRef.current !== null) inputRef.current.value = '';
           }}
           className="m-4">
           <label
@@ -54,13 +65,15 @@ function App() {
                 <label htmlFor="checkbox">
                   <input
                     type="checkbox"
-                    id="checkbox"
                     checked={todo.completed}
-                    onChange={() => setTodos([...todos])}
+                    onChange={(e) => toggleChecked(todo.id, e.target.checked)}
+                    id="checkbox"
                     className="m-2"
                   />
                   {todo.title}
-                  <button className="bg-red-100 px-1 mx-1 rounded-lg border-red-500 border text-red-500 font-bold text-sm">
+                  <button
+                    onClick={() => deleteTodo(todo.id)}
+                    className="bg-red-100 px-1 mx-1 rounded-lg border-red-500 border text-red-500 font-bold text-sm">
                     Delete
                   </button>
                 </label>
